@@ -3,101 +3,640 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pushy - 지원</title>
+  <title>Pushy - 욕먹으면서 더 하게 됨</title>
+  <meta name="description" content="잔소리하는 코치가 푸시업을 세어줍니다. 카메라로 자동 인식, 8가지 개성 넘치는 코치와 함께.">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #09090e;
+      --bg2: #0f0f18;
+      --purple: #a78bfa;
+      --purple-dim: rgba(167,139,250,0.15);
+      --white: #ffffff;
+      --gray: rgba(255,255,255,0.45);
+      --gray-dim: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      background: #09090e;
-      color: #fff;
+      background: var(--bg);
+      color: var(--white);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      background: rgba(9,9,14,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-logo img { width: 28px; height: 28px; border-radius: 7px; }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a {
+      font-size: 13px;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      background: var(--purple);
+      color: #000 !important;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px !important;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* HERO */
+    .hero {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px 24px;
-    }
-    .container {
-      max-width: 560px;
-      width: 100%;
       text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
     }
-    .logo {
-      font-size: 42px;
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(167,139,250,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(167,139,250,0.3);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: var(--purple);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
+    }
+    .hero h1 {
+      font-size: clamp(42px, 8vw, 88px);
       font-weight: 900;
-      letter-spacing: 4px;
-      color: #fff;
-      margin-bottom: 8px;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 12px;
     }
-    .tagline {
+    .hero h1 .accent { color: var(--purple); }
+    .hero-sub {
+      font-size: clamp(16px, 2.5vw, 22px);
+      color: var(--gray);
+      margin-bottom: 40px;
+      line-height: 1.6;
+      max-width: 520px;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 72px;
+    }
+    .btn-appstore {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--white);
+      color: #000;
+      padding: 14px 24px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
       font-size: 15px;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 48px;
+      transition: transform 0.2s, opacity 0.2s;
     }
-    .card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
+    .btn-appstore:hover { transform: translateY(-2px); opacity: 0.9; }
+    .btn-appstore svg { width: 22px; height: 22px; }
+    .btn-appstore .btn-sub { font-size: 11px; font-weight: 400; opacity: 0.6; display: block; line-height: 1; margin-bottom: 2px; }
+
+    /* SCREENS */
+    .screens {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .screen-wrap {
+      position: relative;
+    }
+    .screen-wrap img {
+      width: 180px;
+      border-radius: 28px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      display: block;
+    }
+    .screen-wrap.main img { width: 210px; transform: translateY(0); }
+    .screen-wrap.side img { width: 160px; opacity: 0.7; transform: translateY(20px); }
+
+    /* SECTION COMMON */
+    section { padding: 100px 24px; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 16px;
+      color: var(--gray);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+    .center { text-align: center; }
+    .center .section-desc { margin: 0 auto; }
+
+    /* COACHES */
+    .coaches-section { background: var(--bg2); }
+    .coaches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+      max-width: 900px;
+      margin: 56px auto 0;
+    }
+    .coach-card {
+      background: var(--gray-dim);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px 16px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.25s, border-color 0.25s, background 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .coach-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(167,139,250,0.08), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .coach-card:hover { transform: translateY(-6px); border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.06); }
+    .coach-card:hover::before { opacity: 1; }
+    .coach-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: top;
+      margin: 0 auto 14px;
+      display: block;
+      border: 2px solid var(--border);
+    }
+    .coach-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .coach-tag {
+      font-size: 11px;
+      color: var(--gray);
+      line-height: 1.4;
+    }
+    .coach-lock {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-size: 14px;
+      opacity: 0.4;
+    }
+
+    /* HOW IT WORKS */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      max-width: 860px;
+      margin: 56px auto 0;
+    }
+    .step {
+      background: var(--gray-dim);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(167,139,250,0.3);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--purple);
+      margin-bottom: 20px;
+    }
+    .step h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .step p { font-size: 14px; color: var(--gray); line-height: 1.7; }
+
+    /* FEATURES */
+    .features-section { background: var(--bg2); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 56px auto 0;
+    }
+    .feature-card {
+      background: var(--gray-dim);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+    }
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .feature-card p { font-size: 14px; color: var(--gray); line-height: 1.7; }
+
+    /* QUOTE */
+    .quote-section {
+      text-align: center;
+      padding: 80px 24px;
+    }
+    .quote-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      max-width: 900px;
+      margin: 48px auto 0;
+    }
+    .quote-card {
+      background: var(--gray-dim);
+      border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 32px;
-      margin-bottom: 24px;
+      padding: 24px;
       text-align: left;
     }
-    .card h2 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: #fff;
-    }
-    .card p {
+    .quote-text {
       font-size: 14px;
       line-height: 1.7;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 16px;
+      font-style: italic;
     }
-    .card a {
-      color: #a78bfa;
-      text-decoration: none;
+    .quote-coach {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .nav {
-      margin-top: 32px;
-      font-size: 13px;
-      color: rgba(255,255,255,0.3);
+    .quote-coach img {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: top;
     }
-    .nav a {
-      color: rgba(255,255,255,0.4);
-      text-decoration: none;
-      margin: 0 12px;
+    .quote-coach-name { font-size: 12px; font-weight: 700; color: var(--purple); }
+
+    /* FAQ */
+    .faq-section { background: var(--bg2); }
+    .faq-list {
+      max-width: 640px;
+      margin: 48px auto 0;
     }
-    .nav a:hover { color: #fff; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+    .faq-q {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--white);
+    }
+    .faq-a {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* CTA */
+    .cta-section {
+      text-align: center;
+      padding: 120px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(167,139,250,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section h2 {
+      font-size: clamp(32px, 6vw, 60px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+    }
+    .cta-section p { font-size: 16px; color: var(--gray); margin-bottom: 40px; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .footer-links a { font-size: 13px; color: var(--gray); text-decoration: none; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .nav-links .hide-mobile { display: none; }
+      .screens .screen-wrap.side { display: none; }
+      .screen-wrap.main img { width: 240px; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="logo">PUSHY</div>
-    <div class="tagline">욕먹으면서 더 하게 됨</div>
 
-    <div class="card">
-      <h2>문의하기</h2>
-      <p>
-        앱 사용 중 문제가 발생하셨거나 개선 제안이 있으시면 아래 이메일로 연락해 주세요.<br><br>
-        <a href="mailto:app.pushy@gmail.com">app.pushy@gmail.com</a>
-      </p>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="images/AppIcon.png" alt="Pushy">
+    PUSHY
+  </div>
+  <div class="nav-links">
+    <a href="#coaches" class="hide-mobile">코치</a>
+    <a href="#how" class="hide-mobile">사용법</a>
+    <a href="support.html" class="hide-mobile">지원</a>
+    <a href="https://apps.apple.com/app/id6746455709" class="nav-cta">다운로드</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">📱 App Store 출시</div>
+  <h1>욕먹으면서<br><span class="accent">더 하게 됨</span></h1>
+  <p class="hero-sub">잔소리, 협박, 응원 — 8가지 개성 넘치는 코치가<br>당신의 푸시업을 세어드립니다.</p>
+  <div class="hero-buttons">
+    <a href="https://apps.apple.com/app/id6746455709" class="btn-appstore">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <div>
+        <span class="btn-sub">App Store에서 받기</span>
+        무료 다운로드
+      </div>
+    </a>
+  </div>
+  <div class="screens">
+    <div class="screen-wrap side">
+      <img src="images/screen_choose.jpg" alt="코치 선택">
     </div>
-
-    <div class="card">
-      <h2>자주 묻는 질문</h2>
-      <p>
-        <strong style="color:rgba(255,255,255,0.8)">Q. 카메라 권한을 거부했어요.</strong><br>
-        설정 앱 → Pushy → 카메라를 허용으로 변경해 주세요.<br><br>
-        <strong style="color:rgba(255,255,255,0.8)">Q. 푸시업이 자동으로 안 세져요.</strong><br>
-        전면 카메라를 향해 바닥에 엎드려 주세요. 얼굴이 화면에서 30~50cm 거리에 있을 때 가장 잘 인식됩니다.<br><br>
-        <strong style="color:rgba(255,255,255,0.8)">Q. 프리미엄 구매 후 복원이 안 돼요.</strong><br>
-        앱 내 설정 → 구매 복원을 눌러주세요. 동일한 Apple ID로 로그인되어 있어야 합니다.
-      </p>
+    <div class="screen-wrap main">
+      <img src="images/screen_exercise.jpg" alt="운동 화면">
     </div>
-
-    <div class="nav">
-      <a href="privacy.html">개인정보처리방침</a>
+    <div class="screen-wrap side">
+      <img src="images/screen_done.jpg" alt="완료 화면">
     </div>
   </div>
+</section>
+
+<!-- COACHES -->
+<section class="coaches-section" id="coaches">
+  <div class="center">
+    <div class="section-label">캐릭터</div>
+    <h2 class="section-title">8명의 코치, 8가지 지옥</h2>
+    <p class="section-desc">당신이 어떤 스타일에 굴복하는지 알고 있습니다.</p>
+  </div>
+  <div class="coaches-grid">
+    <div class="coach-card">
+      <img class="coach-avatar" src="images/avatar_drill_idle.png" alt="교관">
+      <div class="coach-name">교관</div>
+      <div class="coach-tag">절대 봐주지 않는<br>군대식 훈련</div>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="images/avatar_bully.png" alt="일진">
+      <div class="coach-name">일진</div>
+      <div class="coach-tag">찐따냐고 물어보는<br>그 선배</div>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="images/avatar_mom.png" alt="엄마">
+      <div class="coach-name">엄마</div>
+      <div class="coach-tag">걱정과 잔소리<br>사이 어딘가</div>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="images/avatar_ex.png" alt="전여친">
+      <div class="coach-name">전여친</div>
+      <div class="coach-tag">네가 잘 되는 꼴<br>못 보겠는</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="images/avatar_tfriend.png" alt="친한친구">
+      <div class="coach-name">친한친구</div>
+      <div class="coach-tag">같이 하자며<br>혼자 시키는</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="images/avatar_villain.png" alt="역주행빌런">
+      <div class="coach-name">역주행빌런</div>
+      <div class="coach-tag">세상이 날 막을 순<br>없다는 마인드</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="images/avatar_bj.png" alt="먹방BJ">
+      <div class="coach-name">먹방BJ</div>
+      <div class="coach-tag">운동 후 먹방으로<br>동기부여</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="images/avatar_dawn.png" alt="새벽감성">
+      <div class="coach-name">새벽감성</div>
+      <div class="coach-tag">혼자 감성 취한<br>새벽 코치</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section class="quote-section">
+  <div class="section-label center">실제 대사</div>
+  <h2 class="section-title center">이런 말을 들으면서<br>하게 됩니다</h2>
+  <div class="quote-grid">
+    <div class="quote-card">
+      <div class="quote-text">"야. 마지막이야. 여기서 나가리 되면 나 평생 놀려줄 거야. 각오하고 해."</div>
+      <div class="quote-coach">
+        <img src="images/avatar_bully.png" alt="일진">
+        <span class="quote-coach-name">일진</span>
+      </div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"엄마가 말했지? 꾸준히 해야 한다고. 오늘도 어김없이 왔잖아. 대견해."</div>
+      <div class="quote-coach">
+        <img src="images/avatar_mom.png" alt="엄마">
+        <span class="quote-coach-name">엄마</span>
+      </div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"자세 흐트러지면 인정 안 해. 처음부터 다시. 군기 빠졌어?"</div>
+      <div class="quote-coach">
+        <img src="images/avatar_drill_idle.png" alt="교관">
+        <span class="quote-coach-name">교관</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="center">
+    <div class="section-label">사용법</div>
+    <h2 class="section-title">3단계면 끝</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>코치 선택</h3>
+      <p>8명 중 당신을 가장 잘 자극하는 코치를 고르세요. 교관부터 전여친까지.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>폰을 바닥에</h3>
+      <p>전면 카메라가 보이게 폰을 놓으세요. 얼굴이 30~50cm 거리면 자동 인식됩니다.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>그냥 하세요</h3>
+      <p>코치가 실시간으로 세어드립니다. 목표 달성하면 잔소리도 끝납니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="center">
+    <div class="section-label">기능</div>
+    <h2 class="section-title">생각보다 잘 만들었습니다</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">📷</span>
+      <h3>카메라 자동 인식</h3>
+      <p>전면 카메라로 얼굴 움직임을 감지해 자동으로 횟수를 셉니다. 손 안 써도 됩니다.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⚡</span>
+      <h3>1분 레벨 테스트</h3>
+      <p>처음 시작할 때 1분 테스트로 내 실력을 측정합니다. 레벨에 맞는 세트 구성을 제안해드립니다.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📊</span>
+      <h3>운동 캘린더</h3>
+      <p>완료한 운동이 캘린더에 기록됩니다. 연속 달성 현황을 확인하며 동기를 유지하세요.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎯</span>
+      <h3>자랑하기</h3>
+      <p>운동 완료 후 코치 이미지와 기록이 담긴 공유 카드를 생성합니다. SNS에 올려서 공개 압박을 활용하세요.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="center">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">자주 묻는 질문</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">카메라 화면이 녹화되나요?</div>
+      <div class="faq-a">아닙니다. 카메라 영상은 기기 내에서 실시간으로만 처리되며, 저장·전송·공유되지 않습니다.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">푸시업이 자동으로 안 세어져요.</div>
+      <div class="faq-a">전면 카메라를 향해 바닥에 엎드려 주세요. 얼굴이 화면에서 30~50cm 거리에 있을 때 가장 잘 인식됩니다. 조명이 너무 어두우면 인식률이 낮아질 수 있습니다.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">코치 목소리가 안 들려요.</div>
+      <div class="faq-a">무음 스위치가 켜져 있으면 소리가 나지 않습니다. 사이드 스위치를 확인하거나 음량을 올려주세요.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">프리미엄은 뭐가 달라요?</div>
+      <div class="faq-a">광고가 제거되고, 기본 제공되는 교관·일진·엄마 외에 5명의 코치를 추가로 이용할 수 있습니다.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">구매 후 복원이 안 돼요.</div>
+      <div class="faq-a">앱 내 설정 → 구매 복원을 눌러주세요. 구매 시 사용한 Apple ID로 로그인되어 있어야 합니다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>오늘부터<br>욕먹으면서 해보세요</h2>
+  <p>무료로 시작할 수 있습니다.</p>
+  <a href="https://apps.apple.com/app/id6746455709" class="btn-appstore" style="display:inline-flex; margin: 0 auto;">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    <div>
+      <span class="btn-sub">App Store에서 받기</span>
+      무료 다운로드
+    </div>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="support.html">지원</a>
+    <a href="privacy.html">개인정보처리방침</a>
+    <a href="mailto:app.pushy@gmail.com">app.pushy@gmail.com</a>
+  </div>
+  <div class="footer-copy">© 2026 Pushy. All rights reserved.</div>
+</footer>
+
 </body>
 </html>
