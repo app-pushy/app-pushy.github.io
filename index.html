@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pushy - 오늘도 어떻게든 하게 됩니다</title>
   <meta name="description" content="잔소리하는 코치가 푸시업을 세어줍니다. 카메라로 자동 인식, 8가지 개성 넘치는 코치와 함께.">
+  <link rel="alternate" hreflang="ko" href="https://app-pushy.github.io/">
+  <link rel="alternate" hreflang="en" href="https://app-pushy.github.io/en/">
   <link rel="icon" type="image/png" href="favicon.png">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -69,6 +71,13 @@
       font-size: 13px !important;
     }
     .nav-cta:hover { opacity: 0.85; }
+    .lang-toggle {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 12px; color: var(--gray); text-decoration: none;
+      border: 1px solid var(--border); padding: 5px 10px;
+      border-radius: 20px; transition: color 0.2s, border-color 0.2s;
+    }
+    .lang-toggle:hover { color: var(--white); border-color: rgba(255,255,255,0.25); }
 
     /* HERO */
     .hero {
@@ -415,6 +424,7 @@
     <a href="#coaches" class="hide-mobile">코치</a>
     <a href="#how" class="hide-mobile">사용법</a>
     <a href="support.html" class="hide-mobile">지원</a>
+    <a href="en/" class="lang-toggle">🌐 EN</a>
     <a href="https://apps.apple.com/app/id6771961144" class="nav-cta">다운로드</a>
   </div>
 </nav>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pushy - You WILL Do It. Somehow.</title>
+  <meta name="description" content="8 unique coaches count your push-ups via camera — no tapping required. Drill Sergeant, Nagging Mom, your Ex, and more.">
+  <link rel="canonical" href="https://app-pushy.github.io/en/">
+  <link rel="alternate" hreflang="ko" href="https://app-pushy.github.io/">
+  <link rel="alternate" hreflang="en" href="https://app-pushy.github.io/en/">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #09090e;
+      --bg2: #0f0f18;
+      --purple: #a78bfa;
+      --purple-dim: rgba(167,139,250,0.15);
+      --white: #ffffff;
+      --gray: rgba(255,255,255,0.45);
+      --gray-dim: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      background: rgba(9,9,14,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo img { width: 28px; height: 28px; border-radius: 7px; }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a {
+      font-size: 13px;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      background: var(--purple);
+      color: #000 !important;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px !important;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+    .lang-toggle {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--gray);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 20px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .lang-toggle:hover { color: var(--white); border-color: rgba(255,255,255,0.25); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(167,139,250,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(167,139,250,0.3);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: var(--purple);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
+    }
+    .hero h1 {
+      font-size: clamp(42px, 8vw, 88px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 12px;
+    }
+    .hero h1 .accent { color: var(--purple); }
+    .hero-sub {
+      font-size: clamp(16px, 2.5vw, 22px);
+      color: var(--gray);
+      margin-bottom: 40px;
+      line-height: 1.6;
+      max-width: 520px;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 72px;
+    }
+    .btn-appstore {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--white);
+      color: #000;
+      padding: 14px 24px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .btn-appstore:hover { transform: translateY(-2px); opacity: 0.9; }
+    .btn-appstore svg { width: 22px; height: 22px; }
+    .btn-appstore .btn-sub { font-size: 11px; font-weight: 400; opacity: 0.6; display: block; line-height: 1; margin-bottom: 2px; }
+
+    /* SCREENS */
+    .screens {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+    }
+    .screen-wrap { border-radius: 28px; overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,0.6); }
+    .screen-wrap.side { transform: scale(0.88) translateY(16px); opacity: 0.7; }
+    .screen-wrap.main img { width: 220px; }
+    .screen-wrap.side img { width: 200px; }
+
+    /* COACHES */
+    .coaches-section { padding: 100px 24px; }
+    .coaches-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 900px;
+      margin: 48px auto 0;
+    }
+    .coach-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px 16px;
+      text-align: center;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .coach-card:hover { transform: translateY(-4px); border-color: rgba(167,139,250,0.3); }
+    .coach-avatar { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 12px; object-fit: cover; }
+    .coach-name { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .coach-tag { font-size: 11px; color: var(--gray); line-height: 1.5; }
+    .coach-lock {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-size: 14px;
+      opacity: 0.5;
+    }
+
+    /* QUOTES */
+    .quote-section { padding: 80px 24px; background: var(--bg2); }
+    .quote-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 960px;
+      margin: 40px auto 0;
+    }
+    .quote-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .quote-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--white);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    .quote-coach { display: flex; align-items: center; gap: 10px; }
+    .quote-coach img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+    .quote-coach-name { font-size: 12px; color: var(--gray); font-weight: 600; }
+
+    /* HOW */
+    section#how { padding: 100px 24px; }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 860px;
+      margin: 48px auto 0;
+    }
+    .step {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 24px;
+    }
+    .step-num {
+      width: 40px; height: 40px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(167,139,250,0.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 900; color: var(--purple);
+      margin-bottom: 16px;
+    }
+    .step h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+    .step p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+
+    /* FEATURES */
+    .features-section { padding: 100px 24px; background: var(--bg2); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      max-width: 860px;
+      margin: 48px auto 0;
+    }
+    .feature-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+    }
+    .feature-icon { font-size: 32px; display: block; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+    .feature-card p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+
+    /* FAQ */
+    .faq-section { padding: 100px 24px; }
+    .faq-list { max-width: 680px; margin: 48px auto 0; display: flex; flex-direction: column; gap: 12px; }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+    }
+    .faq-q { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+    .faq-a { font-size: 14px; color: var(--gray); line-height: 1.6; }
+
+    /* CTA */
+    .cta-section {
+      padding: 120px 24px;
+      text-align: center;
+      background: var(--bg2);
+    }
+    .cta-section h2 { font-size: clamp(32px, 6vw, 64px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 16px; }
+    .cta-section p { font-size: 17px; color: var(--gray); margin-bottom: 40px; }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
+    .footer-links a { font-size: 13px; color: var(--gray); text-decoration: none; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
+
+    /* SHARED LAYOUT */
+    .center { text-align: center; max-width: 600px; margin: 0 auto; }
+    .section-label {
+      display: inline-block;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      color: var(--purple); text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .section-title { font-size: clamp(28px, 5vw, 48px); font-weight: 900; letter-spacing: -1px; line-height: 1.15; margin-bottom: 16px; }
+    .section-desc { font-size: 16px; color: var(--gray); line-height: 1.6; }
+
+    @media (max-width: 700px) {
+      nav { padding: 14px 20px; }
+      .coaches-grid { grid-template-columns: repeat(2, 1fr); }
+      .quote-grid, .steps, .features-grid { grid-template-columns: 1fr; }
+      .nav-links .hide-mobile { display: none; }
+      .screens .screen-wrap.side { display: none; }
+      .screen-wrap.main img { width: 240px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="../" class="nav-logo">
+    <img src="../images/AppIcon.png" alt="Pushy">
+    PUSHY
+  </a>
+  <div class="nav-links">
+    <a href="#coaches" class="hide-mobile">Coaches</a>
+    <a href="#how" class="hide-mobile">How it works</a>
+    <a href="support.html" class="hide-mobile">Support</a>
+    <a href="../" class="lang-toggle">🇰🇷 한국어</a>
+    <a href="https://apps.apple.com/app/id6771961144" class="nav-cta">Download</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">📱 Available on the App Store</div>
+  <h1>You <span class="accent">WILL</span> do it.<br>Somehow.</h1>
+  <p class="hero-sub">Nagging, pressure, or pure vibes —<br>8 coaches count every push-up so you can't quit.</p>
+  <div class="hero-buttons">
+    <a href="https://apps.apple.com/app/id6771961144" class="btn-appstore">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <div>
+        <span class="btn-sub">Download on the</span>
+        App Store — Free
+      </div>
+    </a>
+  </div>
+  <div class="screens">
+    <div class="screen-wrap side">
+      <img src="../images/screen_choose.jpg" alt="Choose your coach">
+    </div>
+    <div class="screen-wrap main">
+      <img src="../images/screen_exercise.jpg" alt="Workout screen">
+    </div>
+    <div class="screen-wrap side">
+      <img src="../images/screen_done.jpg" alt="Done screen">
+    </div>
+  </div>
+</section>
+
+<!-- COACHES -->
+<section class="coaches-section" id="coaches">
+  <div class="center">
+    <div class="section-label">Coaches</div>
+    <h2 class="section-title">8 Coaches. 8 Kinds of Misery.</h2>
+    <p class="section-desc">There's one that works on you. You just haven't found it yet.</p>
+  </div>
+  <div class="coaches-grid">
+    <!-- FREE -->
+    <div class="coach-card">
+      <img class="coach-avatar" src="../images/avatar_drill_idle.png" alt="Drill Sergeant">
+      <div class="coach-name">Drill Sergeant</div>
+      <div class="coach-tag">Iron discipline.<br>Zero mercy.</div>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="../images/avatar_dawn.png" alt="Late-Night DJ">
+      <div class="coach-name">Late-Night DJ</div>
+      <div class="coach-tag">Smooth late-night radio.<br>Solo workout vibes.</div>
+    </div>
+    <!-- PREMIUM -->
+    <div class="coach-card">
+      <img class="coach-avatar" src="../images/avatar_tfriend.png" alt="Logical Friend">
+      <div class="coach-name">Logical Friend</div>
+      <div class="coach-tag">Data-driven. Zero empathy.<br>Technically motivating.</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="../images/avatar_bully.png" alt="Bully">
+      <div class="coach-name">Bully</div>
+      <div class="coach-tag">Tsundere ego bruiser.<br>Secretly rooting for you.</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="../images/avatar_mom.png" alt="Nagging Mom">
+      <div class="coach-name">Nagging Mom</div>
+      <div class="coach-tag">Guilt-trip powered love.<br>Nagging that actually works.</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="../images/avatar_ex.png" alt="The Ex">
+      <div class="coach-name">The Ex</div>
+      <div class="coach-tag">Constant comparisons.<br>Weirdly effective.</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="../images/avatar_villain.png" alt="Villain">
+      <div class="coach-name">Villain</div>
+      <div class="coach-tag">Reluctant cheerleader.<br>Won't admit you're doing great.</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+    <div class="coach-card">
+      <img class="coach-avatar" src="../images/avatar_bj.png" alt="Food Streamer">
+      <div class="coach-name">Food Streamer</div>
+      <div class="coach-tag">Chat hype, donation alerts.<br>Earn tonight's dinner.</div>
+      <span class="coach-lock">🔒</span>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section class="quote-section">
+  <div class="section-label center">Real Lines</div>
+  <h2 class="section-title center">These are the words<br>that make you move.</h2>
+  <div class="quote-grid">
+    <div class="quote-card">
+      <div class="quote-text">"Hey. Last one. Bail now and I'll make fun of you forever. Brace yourself."</div>
+      <div class="quote-coach">
+        <img src="../images/avatar_bully.png" alt="Bully">
+        <span class="quote-coach-name">Bully</span>
+      </div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"Tired? When Mom was your age, it was way harder. Keep going."</div>
+      <div class="quote-coach">
+        <img src="../images/avatar_mom.png" alt="Nagging Mom">
+        <span class="quote-coach-name">Nagging Mom</span>
+      </div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"Set four. Quit here, start over."</div>
+      <div class="quote-coach">
+        <img src="../images/avatar_drill_idle.png" alt="Drill Sergeant">
+        <span class="quote-coach-name">Drill Sergeant</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="center">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">Three steps. That's it.</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Pick your coach</h3>
+      <p>Choose the one who gets under your skin the most. Drill Sergeant to your Ex — someone on this list will work.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Put your phone on the floor</h3>
+      <p>Face the front camera. Keep your face 30–50 cm away and it counts automatically. No tapping needed.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Just go.</h3>
+      <p>Your coach counts every rep in real time. Hit the target and the nagging stops. Simple.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="center">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Actually well made.</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">📷</span>
+      <h3>Auto-counting camera</h3>
+      <p>The front camera detects your face movement and counts every rep. Hands completely free.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⚡</span>
+      <h3>1-minute level test</h3>
+      <p>Max reps in 60 seconds sets your baseline. The app builds a workout plan around your actual level.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📊</span>
+      <h3>Workout calendar</h3>
+      <p>Every session gets logged. Track your streak and watch consistency compound over time.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎯</span>
+      <h3>Share card</h3>
+      <p>After finishing, generate a coach-branded card with your stats. Post it and apply some public accountability.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="center">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">Common questions</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">Does the camera record or store video?</div>
+      <div class="faq-a">No. Camera input is processed in real time on your device only. Nothing is saved, transmitted, or shared.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Push-ups aren't being counted.</div>
+      <div class="faq-a">Place your phone on the floor facing up so the front camera sees your face. Best results at 30–50 cm distance. Low lighting can reduce accuracy.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">I can't hear the coach.</div>
+      <div class="faq-a">Check that your silent switch is off and volume is turned up. The app uses the main speaker output.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What does premium include?</div>
+      <div class="faq-a">Removes ads and unlocks 6 additional coaches beyond the free Drill Sergeant and Late-Night DJ.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can't restore my purchase.</div>
+      <div class="faq-a">Go to Settings → Restore Purchase inside the app. Make sure you're signed in with the same Apple ID used for the original purchase.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Start getting yelled at<br>today. It's free.</h2>
+  <p>No equipment. No excuses.</p>
+  <a href="https://apps.apple.com/app/id6771961144" class="btn-appstore" style="display:inline-flex; margin: 0 auto;">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    <div>
+      <span class="btn-sub">Download on the</span>
+      App Store — Free
+    </div>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="support.html">Support</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="mailto:app.pushy@gmail.com">app.pushy@gmail.com</a>
+  </div>
+  <div class="footer-copy">© 2026 Pushy. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
